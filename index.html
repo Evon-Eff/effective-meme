@@ -329,7 +329,7 @@
         ];
 
         // Сколько секунд на сборку одной строки
-        const TIME_PER_LINE = 4;
+        const TIME_PER_LINE = 7;
 
         function resizeCanvas() {
             canvas.width = window.innerWidth;
@@ -448,7 +448,7 @@
             const scaledCanvas = document.createElement('canvas');
             const scaledCtx = scaledCanvas.getContext('2d');
 
-            const particleSize = isMobile ? 4 : 3;
+            const particleSize = isMobile ? 8 : 3;
             scaledCanvas.width = Math.floor(imgW / particleSize);
             scaledCanvas.height = Math.floor(imgH / particleSize);
 
