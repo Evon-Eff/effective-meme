@@ -16,7 +16,7 @@
             height: 100%;
             background: #000;
             overflow: hidden;
-            font-family: 'Arial', sans-serif;
+            font-family: 'Georgia', serif;
         }
 
         .space-screen {
@@ -297,7 +297,7 @@
         }
 
         // ============================================
-        // === КОМПОЗИЦИЯ ===
+        // === КВЕСТ: СЕРДЦЕ → СТРОКИ СТИХА ===
         // ============================================
 
         const canvas = document.getElementById('starCanvas');
@@ -312,6 +312,25 @@
         let bufW = 0;
         let bufH = 0;
 
+        // === СТИХ (по строкам) ===
+        const poemLines = [
+            'Ты — как утро после сна,',
+            'Как рассвет в моём окне.',
+            'Ты — как тихая весна,',
+            'Что пришла ко мне во сне.',
+            'Твои глаза — как небеса,',
+            'В них я тону без конца.',
+            'Твоя улыбка — как заря,',
+            'Согревает мне сердца.',
+            'Ты — моя мечта, мой свет,',
+            'Я тебя благодарю —',
+            'За то, что ты есть на свете,',
+            'За то, что я тебя люблю. ❤️'
+        ];
+
+        // Сколько секунд на сборку одной строки
+        const TIME_PER_LINE = 4;
+
         function resizeCanvas() {
             canvas.width = window.innerWidth;
             canvas.height = window.innerHeight;
@@ -325,167 +344,51 @@
         resizeCanvas();
         window.addEventListener('resize', resizeCanvas);
 
-        // === СЕРДЦЕ ===
-        function drawHeart(c, cx, cy, scale, lineWidth, withLetter, letter) {
-            c.beginPath();
-            for (let t = 0; t <= Math.PI * 2; t += 0.01) {
-                const x = 16 * Math.pow(Math.sin(t), 3);
-                const y = 13 * Math.cos(t) - 5 * Math.cos(2 * t) - 2 * Math.cos(3 * t) - Math.cos(4 * t);
-                const px = cx + x * scale / 16;
-                const py = cy - y * scale / 16;
-
-                if (t === 0) c.moveTo(px, py);
-                else c.lineTo(px, py);
-            }
-            c.closePath();
-
-            if (withLetter) {
-                c.fill();
-                if (letter) {
-                    c.fillStyle = '#000';
-                    c.font = 'bold ' + (scale * 1.2) + 'px Arial';
-                    c.textAlign = 'center';
-                    c.textBaseline = 'middle';
-                    c.fillText(letter, cx, cy + 5);
-                    c.fillStyle = '#fff';
-                }
-            } else {
-                c.lineWidth = lineWidth;
-                c.stroke();
-            }
-        }
-
-        // === САТУРН ===
-        function drawSaturn(c, cx, cy, r) {
-            c.fillStyle = '#fff';
-            c.beginPath();
-            c.arc(cx, cy, r, 0, Math.PI * 2);
-            c.fill();
-
-            c.strokeStyle = '#fff';
-            c.lineWidth = 3;
-            c.beginPath();
-            c.ellipse(cx, cy, r * 1.8, r * 0.4, -0.4, 0, Math.PI * 2);
-            c.stroke();
-        }
-
-        // === ИНЬ-ЯН ===
-        function drawYinYang(c, cx, cy, r) {
-            c.fillStyle = '#fff';
-            c.beginPath();
-            c.arc(cx, cy, r, 0, Math.PI * 2);
-            c.fill();
-
-            c.fillStyle = '#000';
-            c.beginPath();
-            c.arc(cx, cy, r, Math.PI / 2, Math.PI * 1.5);
-            c.fill();
-
-            c.fillStyle = '#fff';
-            c.beginPath();
-            c.arc(cx, cy - r / 2, r / 2, 0, Math.PI * 2);
-            c.fill();
-
-            c.fillStyle = '#000';
-            c.beginPath();
-            c.arc(cx, cy + r / 2, r / 2, 0, Math.PI * 2);
-            c.fill();
-
-            c.fillStyle = '#000';
-            c.beginPath();
-            c.arc(cx, cy - r / 2, r / 6, 0, Math.PI * 2);
-            c.fill();
-
-            c.fillStyle = '#fff';
-            c.beginPath();
-            c.arc(cx, cy + r / 2, r / 6, 0, Math.PI * 2);
-            c.fill();
-        }
-
-        // === ПЛЕЙ (два треугольника влево) ===
-        function drawPlay(c, cx, cy, size) {
-            c.fillStyle = '#fff';
-            c.lineWidth = 4;
-
-            c.beginPath();
-            c.moveTo(cx - size * 1.8, cy - size * 0.9);
-            c.lineTo(cx - size * 1.8, cy + size * 0.9);
-            c.lineTo(cx - size * 0.7, cy);
-            c.closePath();
-            c.fill();
-
-            c.fillRect(cx - size * 0.4, cy - size * 0.9, size * 0.25, size * 1.8);
-            c.fillRect(cx + size * 0.1, cy - size * 0.9, size * 0.25, size * 1.8);
-
-            c.beginPath();
-            c.moveTo(cx + size * 1.8, cy - size * 0.9);
-            c.lineTo(cx + size * 1.8, cy + size * 0.9);
-            c.lineTo(cx + size * 0.7, cy);
-            c.closePath();
-            c.fill();
-        }
-
-        // === СЕРДЦЕ С ГЛАЗОМ ===
-        function drawHeartWithEye(c, cx, cy, scale) {
-            c.beginPath();
-            for (let t = 0; t <= Math.PI * 2; t += 0.01) {
-                const x = 16 * Math.pow(Math.sin(t), 3);
-                const y = 13 * Math.cos(t) - 5 * Math.cos(2 * t) - 2 * Math.cos(3 * t) - Math.cos(4 * t);
-                const px = cx + x * scale / 16;
-                const py = cy - y * scale / 16;
-
-                if (t === 0) c.moveTo(px, py);
-                else c.lineTo(px, py);
-            }
-            c.closePath();
-            c.lineWidth = 4;
-            c.stroke();
-
-            c.fillStyle = '#fff';
-            c.beginPath();
-            c.ellipse(cx, cy, scale * 0.5, scale * 0.35, 0, 0, Math.PI * 2);
-            c.fill();
-
-            c.fillStyle = '#000';
-            c.beginPath();
-            c.arc(cx, cy, scale * 0.18, 0, Math.PI * 2);
-            c.fill();
-            c.fillStyle = '#fff';
-        }
-
-        // === ПАУК ===
-        function drawSpider(c, cx, cy, r) {
-            c.fillStyle = '#fff';
-            c.strokeStyle = '#fff';
-            c.lineWidth = 3;
-
-            c.beginPath();
-            c.arc(cx, cy, r * 0.5, 0, Math.PI * 2);
-            c.fill();
-
-            c.beginPath();
-            c.arc(cx, cy - r * 0.6, r * 0.3, 0, Math.PI * 2);
-            c.fill();
-
-            for (let i = 0; i < 8; i++) {
-                const angle = (Math.PI / 4) * i + Math.PI / 8;
-                const x1 = cx + Math.cos(angle) * r * 0.5;
-                const y1 = cy + Math.sin(angle) * r * 0.5;
-                const x2 = cx + Math.cos(angle) * r * 1.5;
-                const y2 = cy + Math.sin(angle) * r * 1.5;
-
-                c.beginPath();
-                c.moveTo(x1, y1);
-                c.lineTo(x2, y2);
-                c.stroke();
-            }
-        }
-
-        // === ВСЯ КОМПОЗИЦИЯ ===
-        function drawComposition() {
-            const w = 1200;
-            const h = 1400;
+        // === РИСУЕМ СЕРДЦЕ С "К" ===
+        function drawHeartWithK() {
             const tempCanvas = document.createElement('canvas');
+            const size = 1000;
+            tempCanvas.width = size;
+            tempCanvas.height = size;
+            const c = tempCanvas.getContext('2d');
+
+            c.fillStyle = '#000';
+            c.fillRect(0, 0, size, size);
+
+            c.fillStyle = '#fff';
+            c.beginPath();
+
+            const cx = size / 2;
+            const cy = size / 2;
+            const scale = 28;
+
+            for (let t = 0; t <= Math.PI * 2; t += 0.01) {
+                const x = 16 * Math.pow(Math.sin(t), 3);
+                const y = 13 * Math.cos(t) - 5 * Math.cos(2 * t) - 2 * Math.cos(3 * t) - Math.cos(4 * t);
+                const px = cx + x * scale;
+                const py = cy - y * scale;
+
+                if (t === 0) c.moveTo(px, py);
+                else c.lineTo(px, py);
+            }
+            c.closePath();
+            c.fill();
+
+            // Буква "К"
+            c.fillStyle = '#000';
+            c.font = 'bold ' + (size * 0.42) + 'px Arial';
+            c.textAlign = 'center';
+            c.textBaseline = 'middle';
+            c.fillText('К', cx, cy + size * 0.02);
+
+            return tempCanvas;
+        }
+
+        // === РИСУЕМ СТРОКУ ===
+        function drawLine(text) {
+            const tempCanvas = document.createElement('canvas');
+            const w = 1600;
+            const h = 400;
             tempCanvas.width = w;
             tempCanvas.height = h;
             const c = tempCanvas.getContext('2d');
@@ -494,170 +397,58 @@
             c.fillRect(0, 0, w, h);
 
             c.fillStyle = '#fff';
-            c.strokeStyle = '#fff';
             c.textAlign = 'center';
             c.textBaseline = 'middle';
 
-            // @ЛЯЛЯ
-            c.font = 'bold 30px Arial';
-            c.fillText('@ЛЯЛЯ', 130, 60);
+            // Автоподбор размера шрифта
+            let fontSize = 130;
+            c.font = 'bold ' + fontSize + 'px Georgia';
+            while (c.measureText(text).width > w * 0.9 && fontSize > 30) {
+                fontSize -= 5;
+                c.font = 'bold ' + fontSize + 'px Georgia';
+            }
 
-            // ТЫ ПРЕКРАСНА 😍😘
-            c.font = 'bold 32px Arial';
-            c.fillText('ТЫ ПРЕКРАСНА', 130, 100);
-
-            // Буква К (вместо знака Х) — большая, в центре
-            c.font = 'bold 130px Arial';
-            c.fillText('К', 500, 620);
-
-            // УЛЫБНИСЬ, ТЫ КРАСОТКА
-            c.font = 'bold 30px Arial';
-            c.fillText('УЛЫБНИСЬ,', 180, 310);
-            c.fillText('ТЫ КРАСОТКА', 180, 350);
-
-            // Love66
-            c.font = 'italic bold 45px Georgia';
-            c.fillText('Love66', 700, 90);
-
-            // Сердце с глазом
-            drawHeartWithEye(c, 850, 180, 80);
-
-            // Сердце с губами
-            drawHeart(c, 600, 380, 100, 6, false, null);
-
-            c.fillStyle = '#fff';
-            c.beginPath();
-            c.moveTo(565, 375);
-            c.quadraticCurveTo(585, 355, 600, 370);
-            c.quadraticCurveTo(615, 355, 635, 375);
-            c.quadraticCurveTo(600, 385, 565, 375);
-            c.closePath();
-            c.fill();
-
-            c.beginPath();
-            c.moveTo(565, 375);
-            c.quadraticCurveTo(600, 405, 635, 375);
-            c.quadraticCurveTo(600, 385, 565, 375);
-            c.closePath();
-            c.fill();
-
-            c.strokeStyle = '#000';
-            c.lineWidth = 2;
-            c.beginPath();
-            c.moveTo(565, 375);
-            c.quadraticCurveTo(600, 380, 635, 375);
-            c.stroke();
-            c.strokeStyle = '#fff';
-
-            // KARMA
-            c.font = 'bold 50px Arial';
-            c.fillText('KARMA', 200, 480);
-
-            // ТО... + сердце
-            c.font = 'bold 20px Arial';
-            c.fillText('ТО...', 450, 470);
-            drawHeart(c, 520, 480, 35, 3, false, null);
-
-            // Сатурн
-            drawSaturn(c, 200, 620, 35);
-
-            // Сердце с глазом 2
-            drawHeartWithEye(c, 850, 600, 70);
-
-            // I Love you...
-            c.font = 'italic bold 32px Georgia';
-            c.fillText('I', 800, 720);
-            c.fillText('Love', 800, 760);
-            c.fillText('you...', 800, 800);
-
-            // Паук
-            drawSpider(c, 200, 780, 30);
-
-            // Loser
-            c.font = 'bold 45px Arial';
-            c.fillText('Loser', 250, 890);
-
-            // Плей (◄◄)
-            drawPlay(c, 600, 900, 25);
-
-            // Инь-ян
-            drawYinYang(c, 950, 900, 45);
-
-            // Сердце с К (единственное, внизу)
-            drawHeart(c, 700, 1080, 80, 5, true, 'К');
-
-            // STOP angel
-            c.font = 'italic bold 38px Georgia';
-            c.fillText('STOP', 850, 1180);
-            c.fillText('angel', 850, 1225);
-
-            // MONSTER (вертикально)
-            c.save();
-            c.translate(1120, 1080);
-            c.rotate(Math.PI / 2);
-            c.font = 'bold 50px Arial';
-            c.fillText('MONSTER', 0, 0);
-            c.restore();
-
-            // Маленькое сердце
-            drawHeart(c, 950, 1080, 50, 3, false, null);
-
-            // Шарики
-            c.fillStyle = '#fff';
-            c.beginPath();
-            c.arc(1000, 380, 40, 0, Math.PI * 2);
-            c.fill();
-            c.beginPath();
-            c.arc(1080, 400, 35, 0, Math.PI * 2);
-            c.fill();
-
-            c.lineWidth = 4;
-            c.lineCap = 'round';
-            c.beginPath();
-            c.moveTo(1000, 420);
-            c.lineTo(990, 440);
-            c.lineTo(1010, 460);
-            c.lineTo(990, 480);
-            c.stroke();
-            c.beginPath();
-            c.moveTo(1080, 435);
-            c.lineTo(1070, 460);
-            c.lineTo(1090, 485);
-            c.lineTo(1070, 510);
-            c.stroke();
-
-            // iloveyou
-            c.font = 'bold 60px Georgia';
-            c.textAlign = 'left';
-            c.fillText('iloveyou', 80, 1300);
+            c.fillText(text, w / 2, h / 2);
 
             return tempCanvas;
         }
 
-        function initComposition() {
-            const tempCanvas = drawComposition();
-
+        // === СОЗДАЁМ ЧАСТИЦЫ ИЗ КАРТИНКИ ===
+        function createParticles(tempCanvas, widthRatio, heightRatio) {
             let imgW, imgH;
-            if (isMobile) {
-                imgW = canvas.width * 0.95;
-                imgH = imgW * 1.167;
-                if (imgH > canvas.height * 0.85) {
-                    imgH = canvas.height * 0.85;
-                    imgW = imgH / 1.167;
+
+            if (tempCanvas.width === tempCanvas.height) {
+                // Квадрат (сердце)
+                if (isMobile) {
+                    imgW = Math.min(canvas.width * 0.85, canvas.height * 0.6);
+                    imgH = imgW;
+                } else {
+                    imgW = Math.min(canvas.width * 0.5, canvas.height * 0.7);
+                    imgH = imgW;
                 }
             } else {
-                imgW = Math.min(canvas.width * 0.9, canvas.height * 0.77);
-                imgH = imgW * 1.167;
-                if (imgH > canvas.height * 0.9) {
-                    imgH = canvas.height * 0.9;
-                    imgW = imgH / 1.167;
+                // Строка
+                if (isMobile) {
+                    imgW = canvas.width * 0.95;
+                    imgH = imgW * (tempCanvas.height / tempCanvas.width);
+                    if (imgH > canvas.height * 0.5) {
+                        imgH = canvas.height * 0.5;
+                        imgW = imgH * (tempCanvas.width / tempCanvas.height);
+                    }
+                } else {
+                    imgW = Math.min(canvas.width * 0.9, canvas.height * 1.5);
+                    imgH = imgW * (tempCanvas.height / tempCanvas.width);
+                    if (imgH > canvas.height * 0.6) {
+                        imgH = canvas.height * 0.6;
+                        imgW = imgH * (tempCanvas.width / tempCanvas.height);
+                    }
                 }
             }
 
             const scaledCanvas = document.createElement('canvas');
             const scaledCtx = scaledCanvas.getContext('2d');
 
-            const particleSize = isMobile ? 3 : 2;
+            const particleSize = isMobile ? 4 : 3;
             scaledCanvas.width = Math.floor(imgW / particleSize);
             scaledCanvas.height = Math.floor(imgH / particleSize);
 
@@ -668,7 +459,7 @@
             const offsetX = (canvas.width - imgW) / 2;
             const offsetY = (canvas.height - imgH) / 2;
 
-            particles = [];
+            const newParticles = [];
 
             for (let y = 0; y < scaledCanvas.height; y++) {
                 for (let x = 0; x < scaledCanvas.width; x++) {
@@ -686,45 +477,58 @@
                     const targetX = offsetX + x * particleSize + particleSize / 2;
                     const targetY = offsetY + y * particleSize + particleSize / 2;
 
-                    const startX = Math.random() * canvas.width;
-                    const startY = Math.random() * canvas.height;
-
-                    particles.push({
-                        startX: startX,
-                        startY: startY,
+                    newParticles.push({
                         targetX: targetX,
-                        targetY: targetY,
-                        brightness: 1.0,
-                        progress: 0,
-                        speed: Math.random() * 0.001 + 0.001
+                        targetY: targetY
                     });
                 }
             }
 
-            console.log('⭐ Частиц создано:', particles.length);
-
-            if (particles.length === 0) {
-                ctx.fillStyle = '#fff';
-                ctx.font = '20px Arial';
-                ctx.textAlign = 'center';
-                ctx.fillText('Ошибка 😔', canvas.width / 2, canvas.height / 2);
-                return;
-            }
-
-            console.log('⏱️ Космос крутится 5 секунд...');
-            setTimeout(() => {
-                console.log('🚀 Запуск сборки!');
-                started = true;
-                animateComposition();
-            }, 5000);
+            return newParticles;
         }
 
-        function animateComposition() {
-            animationId = requestAnimationFrame(animateComposition);
+        // === ЗАПУСК ПЕРЕХОДА ===
+        function transitionTo(targetParticles) {
+            // Если частиц больше, чем в цели — оставляем сколько нужно
+            // Если меньше — создаём новые
+            const newParticles = [];
 
-            if (!started) return;
+            const count = Math.min(particles.length, targetParticles.length);
+
+            for (let i = 0; i < targetParticles.length; i++) {
+                let startX, startY;
+
+                if (i < particles.length) {
+                    // Из текущей позиции
+                    startX = particles[i].currentX !== undefined ? particles[i].currentX : particles[i].targetX;
+                    startY = particles[i].currentY !== undefined ? particles[i].currentY : particles[i].targetY;
+                } else {
+                    // Новая частица — из случайного места
+                    startX = Math.random() * canvas.width;
+                    startY = Math.random() * canvas.height;
+                }
+
+                newParticles.push({
+                    startX: startX,
+                    startY: startY,
+                    targetX: targetParticles[i].targetX,
+                    targetY: targetParticles[i].targetY,
+                    brightness: 1.0,
+                    progress: 0,
+                    speed: Math.random() * 0.002 + 0.002
+                });
+            }
+
+            particles = newParticles;
+        }
+
+        // === ОТРИСОВКА ===
+        function animate() {
+            animationId = requestAnimationFrame(animate);
 
             pixelBuffer.fill(0);
+
+            let allDone = true;
 
             for (let i = 0; i < particles.length; i++) {
                 const p = particles[i];
@@ -732,6 +536,7 @@
                 if (p.progress < 1) {
                     p.progress += p.speed;
                     if (p.progress > 1) p.progress = 1;
+                    else allDone = false;
                 }
 
                 const t = p.progress;
@@ -744,6 +549,9 @@
 
                 const x = p.startX + (p.targetX - p.startX) * ease;
                 const y = p.startY + (p.targetY - p.startY) * ease;
+
+                p.currentX = x;
+                p.currentY = y;
 
                 const px = Math.floor(x);
                 const py = Math.floor(y);
@@ -760,12 +568,92 @@
             }
 
             ctx.putImageData(imageData, 0, 0);
+
+            return allDone;
         }
 
+        // === ЗАПУСК АНИМАЦИИ ===
+        function startAnimation() {
+            started = true;
+            animate();
+        }
+
+        // === ПОКАЗ СЕРДЦА → ПОТОМ СТРОКИ ===
+        function showHeart() {
+            const heartCanvas = drawHeartWithK();
+            const heartParticles = createParticles(heartCanvas, 1, 1);
+
+            particles = heartParticles.map(p => ({
+                startX: Math.random() * canvas.width,
+                startY: Math.random() * canvas.height,
+                targetX: p.targetX,
+                targetY: p.targetY,
+                brightness: 1.0,
+                progress: 0,
+                speed: Math.random() * 0.002 + 0.002
+            }));
+
+            console.log('❤️ Сердце:', particles.length, 'частиц');
+
+            startAnimation();
+
+            // Через 6 секунд — переход к первой строке
+            setTimeout(() => {
+                showLine(0);
+            }, 6000);
+        }
+
+        // === ПОКАЗ СТРОКИ ===
+        function showLine(index) {
+            if (index >= poemLines.length) {
+                // Всё закончилось — показать подпись или сердце
+                console.log('✅ Все строки показаны!');
+                return;
+            }
+
+            const lineCanvas = drawLine(poemLines[index]);
+            const lineParticles = createParticles(lineCanvas, 1, 0.3);
+
+            console.log('📝 Строка', index + 1, ':', poemLines[index], '—', lineParticles.length, 'частиц');
+
+            // Переход от текущего состояния к строке
+            const newParticles = [];
+
+            for (let i = 0; i < lineParticles.length; i++) {
+                let startX, startY;
+
+                if (i < particles.length && particles[i].currentX !== undefined) {
+                    startX = particles[i].currentX;
+                    startY = particles[i].currentY;
+                } else {
+                    startX = Math.random() * canvas.width;
+                    startY = Math.random() * canvas.height;
+                }
+
+                newParticles.push({
+                    startX: startX,
+                    startY: startY,
+                    targetX: lineParticles[i].targetX,
+                    targetY: lineParticles[i].targetY,
+                    brightness: 1.0,
+                    progress: 0,
+                    speed: Math.random() * 0.003 + 0.003
+                });
+            }
+
+            particles = newParticles;
+
+            // Через TIME_PER_LINE секунд — переход к следующей строке
+            setTimeout(() => {
+                showLine(index + 1);
+            }, TIME_PER_LINE * 1000);
+        }
+
+        // === СТАРТ ===
         window.addEventListener('load', () => {
             setTimeout(() => {
                 resizeCanvas();
-                initComposition();
+                showHeart();
             }, 100);
         });
     </script>
